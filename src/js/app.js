@@ -3,15 +3,13 @@ console.log('Приложение загружено!');
 document.addEventListener('DOMContentLoaded', () => {
   const errorMessage = document.querySelector('#error-message');
   const successMessage = document.querySelector('#success-message');
-  const newsContainer = document.querySelector('#news-container');
+  // const newsContainer = document.querySelector('#news-container');
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
-        const registration = await navigator.serviceWorker.register(
-          './src/service-worker.js',
-          { scope: './src/' },
-        );
+        const registration =
+          await navigator.serviceWorker.register('/service-worker.js');
         console.log(
           'Service Worker registered with scope:',
           registration.scope,

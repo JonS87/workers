@@ -9,9 +9,15 @@ module.exports = {
     port: 9000,
     open: true,
   },
+  entry: {
+    index: './src/index.js',
+    'service-worker': './src/service-worker.js',
+  },
   devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js',
+    publicPath: '/',
   },
   mode: 'development',
   module: {
@@ -37,16 +43,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name].[ext]',
-              outputPath: 'images/',
-              publicPath: 'images/',
-            },
-          },
-        ],
+        type: 'asset/resource',
       },
     ],
   },
@@ -56,7 +53,7 @@ module.exports = {
       filename: './index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
+      filename: './src/css/[name].css',
       chunkFilename: '[id].css',
     }),
     // new InjectManifest({
