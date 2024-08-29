@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
-        const registration =
-          await navigator.serviceWorker.register('/service-worker.js');
+        const registration = await navigator.serviceWorker.register(
+          './service-worker.js',
+          { scope: './' },
+        );
         console.log(
           'Service Worker registered with scope:',
           registration.scope,
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const url = 'http://localhost:7070';
+  let hasError = false;
 
   fetch(`${url}/api/news`)
     .then((response) => {
@@ -32,9 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((data) => {
       console.log(data.news);
       successMessage.style.display = 'flex';
+      hasError = false;
     })
     .catch((error) => {
-      errorMessage.style.display = 'flex';
-      console.error('Ошибка:', error);
+      if (!hasError) {
+        errorMessage.style.display = 'flex';
+        console.error('Ошибка:', error);
+
+        hasError = true;
+      }
     });
 });

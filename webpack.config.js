@@ -8,6 +8,7 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
+    // hot: true,
   },
   entry: {
     index: './src/index.js',
@@ -17,7 +18,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
-    publicPath: '/',
   },
   mode: 'development',
   module: {
@@ -50,11 +50,11 @@ module.exports = {
   plugins: [
     new HtmlWebPackPlugin({
       template: './src/index.html',
-      filename: './index.html',
+      filename: 'index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: './src/css/[name].css',
-      chunkFilename: '[id].css',
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[id].css',
     }),
     // new InjectManifest({
     //   swSrc: './src/service.worker.js',
