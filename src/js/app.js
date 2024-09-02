@@ -1,9 +1,13 @@
 // TODO: write code here
+import badPicture from '../svg/bad-picture.jpg';
+
 console.log('Приложение загружено!');
 document.addEventListener('DOMContentLoaded', () => {
   const errorMessage = document.querySelector('#error-message');
-  const successMessage = document.querySelector('#success-message');
-  // const newsContainer = document.querySelector('#news-container');
+  const newsContainerWaiting = document.querySelector(
+    '.news-container-waiting',
+  );
+  const newsContainer = document.querySelector('.news-container');
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
@@ -22,9 +26,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const url = 'http://localhost:7070';
-  let hasError = false;
+  const formatDate = (date) => {
+    date = new Date(date);
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')} ${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+  };
 
+  const displayImage = async (picture) => {
+    const response = await fetch(picture);
+
+    const newsPic = document.createElement('div');
+    newsPic.className = 'news-picture';
+    const imgElement = document.createElement('img');
+    imgElement.id = 'image';
+    imgElement.src = response.url;
+    imgElement.alt = 'News Avatar';
+    newsPic.append(imgElement);
+
+    return newsPic;
+  };
+
+  const updateNews = async (news) => {
+    for (const item of news) {
+      const newsElement = document.createElement('div');
+      newsElement.className = 'news';
+
+      const newsDate = document.createElement('div');
+      newsDate.className = 'news-datetime';
+      newsDate.textContent = formatDate(item.received);
+      newsElement.append(newsDate);
+
+      const newsPicTit = document.createElement('div');
+      newsPicTit.className = 'news-picture-titles';
+
+      const newsPic = await displayImage(item.picture);
+      newsPicTit.append(newsPic);
+
+      const newsTit = document.createElement('div');
+      newsTit.className = 'news-title';
+      newsTit.textContent = item.title;
+      newsPicTit.append(newsTit);
+      newsElement.append(newsPicTit);
+
+      newsContainer.append(newsElement);
+    }
+
+    newsContainerWaiting.classList.add('hidden');
+    newsContainer.classList.remove('hidden');
+  };
+
+  const url = 'http://localhost:7070';
   fetch(`${url}/api/news`)
     .then((response) => {
       if (!response.ok) {
@@ -33,16 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return response.json();
     })
     .then((data) => {
-      console.log(data.news);
-      successMessage.style.display = 'flex';
-      hasError = false;
+      updateNews(data.news);
     })
     .catch((error) => {
-      if (!hasError) {
-        errorMessage.style.display = 'flex';
-        console.error('Ошибка:', error);
-
-        hasError = true;
-      }
+      errorMessage.classList.remove('hidden');
+      console.error('Ошибка:', error);
     });
 });

@@ -8,7 +8,13 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
     // hot: true,
+  },
+  watchOptions: {
+    ignored: 'node_modules',
   },
   entry: {
     index: './src/index.js',
@@ -18,13 +24,14 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
+    publicPath: '/',
   },
   mode: 'development',
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /node_modules|service-worker\.js/,
         use: {
           loader: 'babel-loader',
         },
@@ -44,6 +51,9 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'image/[name][ext]',
+        },
       },
     ],
   },
@@ -53,7 +63,7 @@ module.exports = {
       filename: 'index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
+      filename: 'css/style.css',
       chunkFilename: 'css/[id].css',
     }),
     // new InjectManifest({
